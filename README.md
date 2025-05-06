@@ -20,8 +20,7 @@ Este es un microservicio de órdenes desarrollado con NestJS que forma parte de 
 ## Requisitos Previos
 
 - Node.js (v16 o superior)
-- npm o yarn
-- Docker (opcional, para desarrollo con contenedores)
+- pnpm
 
 ## Instalación
 
