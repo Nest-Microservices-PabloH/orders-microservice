@@ -6,8 +6,6 @@ import { OrdersService } from './orders.service';
 @Module({
   controllers: [OrdersController],
   providers: [OrdersService],
-  imports: [
-    NatsModule
-  ]
+  imports: [NatsModule]
 })
 export class OrdersModule { }
