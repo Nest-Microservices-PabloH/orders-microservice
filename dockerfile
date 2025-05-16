@@ -10,5 +10,5 @@ RUN pnpm install --ignore-scripts=false --prefer-offline
 
 COPY . .
 
-EXPOSE 3001
+EXPOSE 3002
 
