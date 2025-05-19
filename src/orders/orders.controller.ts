@@ -1,4 +1,4 @@
-import { Controller, NotImplementedException, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, ParseUUIDPipe } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto, OrderPaginationDto, ChangeOrderStatusDto } from './dto';
@@ -10,8 +10,15 @@ export class OrdersController {
   ) { }
 
   @MessagePattern({ cmd: 'createOrder' })
-  create(@Payload() createOrderDto: CreateOrderDto) {
-    return this.ordersService.create(createOrderDto);
+  async create(@Payload() createOrderDto: CreateOrderDto) {
+
+    const order = await this.ordersService.create(createOrderDto);
+    const paymentSession = await this.ordersService.createPaymentSession(order);
+
+    return {
+      order,
+      paymentSession
+    };
   }
 
   @MessagePattern({ cmd: 'findAllOrders' })

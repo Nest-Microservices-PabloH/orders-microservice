@@ -29,6 +29,19 @@ Este es un microservicio de órdenes desarrollado con NestJS que forma parte de 
 $ pnpm install
 ```
 
+## Configuración de Prisma
+
+```bash
+# Generar el cliente de Prisma
+$ pnpm prisma generate
+
+# Ejecutar las migraciones
+$ pnpm prisma migrate dev
+
+# Ver el estado de la base de datos
+$ pnpm prisma studio
+```
+
 ## Configuración
 
 1. Copiar el archivo `.env.template` a `.env`
