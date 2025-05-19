@@ -16,7 +16,7 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 
 # Exponer el puerto de tu app
-EXPOSE 3003
+EXPOSE 3002
 
 # Comando por defecto (ajusta según tu app)
 CMD [ "pnpm", "run", "start:dev" ]
