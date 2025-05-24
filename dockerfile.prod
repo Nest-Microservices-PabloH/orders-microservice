@@ -23,6 +23,9 @@ RUN pnpm install --frozen-lockfile
 # Etapa builder: compila el proyecto
 FROM base AS builder
 
+ARG ORDERS_DATABASE_URL
+ENV DATABASE_URL=$ORDERS_DATABASE_URL
+
 # Copiar node_modules desde deps
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 
@@ -30,6 +33,7 @@ COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY . .
 
 # Generar Prisma
+RUN pnpm prisma migrate deploy
 RUN pnpm prisma generate
 
 # Compilar el proyecto
