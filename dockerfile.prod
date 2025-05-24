@@ -1,0 +1,62 @@
+# Etapa base: configura pnpm y entorno común
+FROM node:22-alpine AS base
+
+# Activar pnpm usando Corepack
+RUN corepack enable
+
+# Variables de entorno comunes
+ENV NODE_ENV=production
+
+# Establecer directorio de trabajo base
+WORKDIR /usr/src/app
+
+
+# Etapa deps: instala todas las dependencias (incluye dev)
+FROM base AS deps
+
+COPY package.json pnpm-lock.yaml ./
+
+# Instala todas las dependencias (dev + prod)
+RUN pnpm install --frozen-lockfile
+
+
+# Etapa builder: compila el proyecto
+FROM base AS builder
+
+# Copiar node_modules desde deps
+COPY --from=deps /usr/src/app/node_modules ./node_modules
+
+# Copiar el resto del código fuente
+COPY . .
+
+# Generar Prisma
+RUN pnpm prisma generate
+
+# Compilar el proyecto
+RUN pnpm run build
+
+# Eliminar dependencias de desarrollo
+RUN pnpm prune --prod && pnpm store prune
+
+
+# Etapa final: producción
+FROM base AS prod
+
+# Cambiar a un usuario no root
+USER node
+
+# Copiar dependencias ya pruned
+COPY --from=builder /usr/src/app/node_modules ./node_modules
+
+# Copiar código compilado
+COPY --from=builder /usr/src/app/dist ./dist
+
+# Copiar Prisma
+COPY --from=builder /usr/src/app/prisma ./prisma
+
+# Copiar lockfile para inspección/debug
+COPY --from=builder /usr/src/app/pnpm-lock.yaml ./pnpm-lock.yaml
+
+EXPOSE 3000
+
+CMD ["node", "dist/main.js"]
